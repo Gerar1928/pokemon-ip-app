@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tu Pokémon según tu IP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>¡Tu Pokémon según tu IP!</h1>
+    <div class="ip-card">
+      <img id="pokemon-img" src="" alt="Pokémon" />
+      <p id="ip">Cargando IP...</p>
+    </div>
+  </div>
+
+  <script>
+    fetch('/api/ip')
+      .then(response => response.json())
+      .then(data => {
+        const ip = data.ip;
+        document.getElementById('ip').innerText = ip;
+
+        // Obtener el último número de la IP (después del último punto)
+        const lastSegment = parseInt(ip.split('.').pop());
+
+        // Controlar que sea un ID válido (entre 1 y 898)
+        const pokemonId = Math.max(1, Math.min(lastSegment, 898));
+
+        // Construir URL del sprite
+        const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+
+        document.getElementById('pokemon-img').src = spriteUrl;
+      })
+      .catch(err => {
+        document.getElementById('ip').innerText = 'Error al obtener IP';
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
